@@ -5,10 +5,8 @@ from os import path
 
 def matching(line, pattern):
     aux = "(0)+".replace("0", pattern)
-    print(aux)
     matching = re.match(aux, line)
     if matching:
-        print(str(matching.group()))
         return str(matching.group())
     return None
 
@@ -31,7 +29,6 @@ def add_list_item(list_item, line, pattern):
     text = line.replace("\n", "")
     text = text.replace(pattern + " ", "")
     text = list_item[0] + text + list_item[1] + "\n"
-    print(text)
     return text
 
 if __name__ == "__main__":
@@ -43,7 +40,6 @@ if __name__ == "__main__":
                 '-': ['<ul>', '</ul>'],
                 "\*": ['<ol>', '</ol>']}
     list_item = ['<li>', '</li>']
-    # lists = {'-': 0, '*': 0}
     lists = {'-': False, "*": False}
     list_open = [False, '']
     if path.exists(filename_1):
@@ -60,7 +56,6 @@ if __name__ == "__main__":
                             list_open[0] = True
                             list_open[1] = key
                             text += init_list(list_open[0], patterns[list_open[1]])
-                        print('before_adding_item')
                         text += add_list_item(list_item, line, match)
                         break
                     else:
