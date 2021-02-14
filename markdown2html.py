@@ -29,12 +29,10 @@ if __name__ == "__main__":
         with open(sys.argv[1]) as read_file:
             for line in read_file:
                 for key, value in patterns.items():
-                    print(key, value)
                     match = matching(line, key)
                     if match is None:
                         text += line
                         continue
-                    print(match)
                     text += heading_level(match, value, line.replace("\n", ""))
         with open(sys.argv[2], 'w') as new_file:
             new_file.write(text)
