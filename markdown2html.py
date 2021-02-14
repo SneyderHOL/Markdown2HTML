@@ -38,5 +38,6 @@ if __name__ == "__main__":
                     text += heading_level(match, value, line.replace("\n", ""))
         with open(sys.argv[2], 'w') as new_file:
             new_file.write(text)
+        sys.exit(0)
     else:
         sys.exit('Missing ' + sys.argv[1])
