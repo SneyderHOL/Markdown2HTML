@@ -17,12 +17,31 @@ def heading_level(pattern, tags, line):
     content = ""+ line.replace(pattern + " ", "")
     return op_tag + content + cl_tag + "\n"
 
+def init_list(list_open, pattern):
+    text = ""
+    if list_open:
+        text = pattern[0] + "\n"
+    else:
+        text = pattern[1] + "\n"
+    return text
+
+def add_list_item(list_item, line):
+    text = line.replace("\n", "")
+    text = text.replace("- ", "")
+    return list_item[0] + text + list_item[1] + "\n"
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         sys.exit('Usage: ./markdown2html.py README.md README.html')
     filename_1 = sys.argv[1]
     filename_2 = sys.argv[2]
-    patterns = {'#': ['<h0>', '</h0>']}
+    patterns = {'#': ['<h0>', '</h0>'],
+                '-': ['<ul>', '</ul>']}
+                # '*': ['<ol>', '</ol>']}
+    list_item = ['<li>', '</li>']
+    # lists = {'-': 0, '*': 0}
+    lists = {'-': False, '*': False}
+    list_open = [False, '']
     if path.exists(filename_1):
         text = ''
         match = None
@@ -31,9 +50,21 @@ if __name__ == "__main__":
                 for key, value in patterns.items():
                     match = matching(line, key)
                     if match is None:
-                        text += line
                         continue
-                    text += heading_level(match, value, line.replace("\n", ""))
+                    if match in lists:
+                        if list_open[0] is False:
+                            list_open[0] = True
+                            list_open[1] = match
+                            text += init_list(list_open[0], patterns[list_open[1]])
+                        text += add_list_item(list_item, line)
+                    else:
+                        if list_open[0]:
+                            list_open[0]: False
+                            text += init_list(list_open[0], patterns[list_open[1]])
+                        text += heading_level(match, value, line.replace("\n", ""))
+            else:
+                if list_open[0]:
+                    text += init_list(list_open[0], patterns[list_open[1]])
         with open(sys.argv[2], 'w') as new_file:
             new_file.write(text)
         sys.exit(0)
