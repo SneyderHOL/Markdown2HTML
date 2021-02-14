@@ -59,11 +59,12 @@ if __name__ == "__main__":
                         text += add_list_item(list_item, line)
                     else:
                         if list_open[0]:
-                            list_open[0]: False
+                            list_open[0] = False
                             text += init_list(list_open[0], patterns[list_open[1]])
                         text += heading_level(match, value, line.replace("\n", ""))
             else:
                 if list_open[0]:
+                    list_open[0] = False
                     text += init_list(list_open[0], patterns[list_open[1]])
         with open(sys.argv[2], 'w') as new_file:
             new_file.write(text)
