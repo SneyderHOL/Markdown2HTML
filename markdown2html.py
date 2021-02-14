@@ -5,8 +5,10 @@ from os import path
 
 def matching(line, pattern):
     aux = "(0)+".replace("0", pattern)
+    print(aux)
     matching = re.match(aux, line)
     if matching:
+        print(str(matching.group()))
         return str(matching.group())
     return None
 
@@ -25,10 +27,12 @@ def init_list(list_open, pattern):
         text = pattern[1] + "\n"
     return text
 
-def add_list_item(list_item, line):
+def add_list_item(list_item, line, pattern):
     text = line.replace("\n", "")
-    text = text.replace("- ", "")
-    return list_item[0] + text + list_item[1] + "\n"
+    text = text.replace(pattern + " ", "")
+    text = list_item[0] + text + list_item[1] + "\n"
+    print(text)
+    return text
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
@@ -36,11 +40,11 @@ if __name__ == "__main__":
     filename_1 = sys.argv[1]
     filename_2 = sys.argv[2]
     patterns = {'#': ['<h0>', '</h0>'],
-                '-': ['<ul>', '</ul>']}
-                # '*': ['<ol>', '</ol>']}
+                '-': ['<ul>', '</ul>'],
+                "\*": ['<ol>', '</ol>']}
     list_item = ['<li>', '</li>']
     # lists = {'-': 0, '*': 0}
-    lists = {'-': False, '*': False}
+    lists = {'-': False, "*": False}
     list_open = [False, '']
     if path.exists(filename_1):
         text = ''
@@ -54,14 +58,17 @@ if __name__ == "__main__":
                     if match in lists:
                         if list_open[0] is False:
                             list_open[0] = True
-                            list_open[1] = match
+                            list_open[1] = key
                             text += init_list(list_open[0], patterns[list_open[1]])
-                        text += add_list_item(list_item, line)
+                        print('before_adding_item')
+                        text += add_list_item(list_item, line, match)
+                        break
                     else:
                         if list_open[0]:
                             list_open[0] = False
                             text += init_list(list_open[0], patterns[list_open[1]])
                         text += heading_level(match, value, line.replace("\n", ""))
+                        break
             else:
                 if list_open[0]:
                     list_open[0] = False
